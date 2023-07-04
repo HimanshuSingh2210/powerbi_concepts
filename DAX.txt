@@ -1,0 +1,182 @@
+Filter Function
+filter
+
+south= FILTER(SalesOrder,SalesOrder'[Region]="south" )
+
+negative_profit = FILTER(SalesOrder,SalesOrder[Profit]<0)
+
+OR--
+south_east=Filter(SalesOrder,or
+(SalesOrder'[Region]="south",
+salesorder'[region]'="east")
+
+--can write in this way
+south_east=Filter(SalesOrder,
+(SalesOrder'[Region]="south" ||
+salesorder'[region]'="east")
+
+
+AND--
+
+south_negative_profit = FILTER(SalesOrder,AND
+('SalesOrder'[Profit]<0 , 'SalesOrder'[Region]="south" )
+
+--can write in this way
+south_negative_profit = FILTER(SalesOrder
+('SalesOrder'[Profit]<0 && SalesOrder[Region]="south" )
+
+
+
+
+south_furniture_negative_profit = FILTER('SalesOrder'
+(SalesOrder[Profit]<0 && 
+SalesOrder[Region]="south" &&
+ SalesOrder[category]="furniture")
+
+CALCULATE
+sum_of_east_sales = CALCULATE(SUM(SalesOrder[Sales]),FILTER(SalesOrder,SalesOrder[Region]="east"))
+
+sum_of_east_tech_sales = CALCULATE(SUM(SalesOrder[Sales]),FILTER(SalesOrder,SalesOrder[Region]="east" && SalesOrder[Category]="technology"))
+
+avg_sales_south_furniture = CALCULATE(AVERAGE(SalesOrder[Sales]),FILTER(SalesOrder,SalesOrder[Region]="south" && SalesOrder[Category]="furniture"))
+
+
+Date function
+
+year:year = YEAR(SalesOrder[Order Date])
+month:month = MONTH(SalesOrder[Order Date])
+weeknum: weekno = WEEKNUM(SalesOrder[Order Date])
+day:day = day(SalesOrder[Order Date])
+weekday:weekday = WEEKDAY(SalesOrder[Order Date])
+now: NOW()
+datediff: datediff = datediff(SalesOrder[Order Date],[now],YEAR)
+          datediff = datediff(SalesOrder[Order Date],[Ship Date],YEAR)
+dateadd:  dateadd = DATEADD(SalesOrder[Order Date],3,MONTH)
+EOMONTH= EOMONTH(SalesOrder[Order Date],1)
+
+
+TIME AND INTELLIGENCE
+--rules
+(1.no gaps between date,continous date)
+(2.no null values)
+when table dont statisfy this condition then we have to do this
+
+calender = CALENDAR("01-jan-2014","31-dec-2017")
+or
+calender = CALENDAR(MIN(SalesOrder[Order Date]),MAX(SalesOrder[Order Date]))
+
+YEAR_date = YEAR(calender[Date])
+month_date = MONTH(calender[Date])
+Quater_date = QUARTER(calender[Date])
+
+create_measure
+
+pyr_sales = CALCULATE(SUM(SalesOrder[Sales]),PREVIOUSYEAR(calender[Date]))
+nyr_sales = CALCULATE(SUM(SalesOrder[Sales]),nextYEAR(calender[Date]))
+
+dateadd = DATEADD(SalesOrder[Order Date],3,MONTH)
+nextquater:next_quater = CALCULATE(SUM(SalesOrder[Sales]),NEXTQUARTER(calender[Date]))
+ytd:yeartodate = TOTALYTD(SUM(SalesOrder[Sales]),calender[Date]) --iss mein saal ke baad wapas chalu hoga
+mtd:totalMTD = TOTALMTD(SUM(SalesOrder[Sales]),calender[Date])
+previousmonth:previous_month = CALCULATE(SUM(SalesOrder[Sales]),PREVIOUSMONTH(calender[Date]))
+
+
+___________________________________________
+
+PERCENT
+
+PER_NEXMONTH = (SUM(SalesOrder[Sales])+([NEXTm]))/SUM(SalesOrder[Sales])*100-100
+
+percent_change = (SUM(SalesOrder[Sales])-[previous_month])/SUM(SalesOrder[Sales])*100
+
+
+
+-----------------------------------------------------------------------------------
+if = IF([Profit]<0,"negative_profit","positive_profit")
+
+nested_if = IF([Profit]=0,"neutral",IF([Profit]>0,"positive_profit","negative_profit"))
+
+if_with_and = IF(AND([Sales]>10000,[Profit]>1000),"high_profit","low_profit")
+if_with_and = IF(([Sales]>10000 && [Profit]>1000),"high_profit","low_profit")
+
+
+
+
+if_with_or = IF(Or([Sales]>10000,[Profit]>1000),"high_profit","low_profit")
+if_with_or = IF(([Sales]>10000 || [Profit]>1000),"high_profit","low_profit")
+
+----------------------------------------------------------------------------------------
+
+closing_balance_month = CLOSINGBALANCEMONTH(sum(SalesOrder[Sales]),calender[Date])
+
+
+------------------------------------------------------------
+
+TEXT_FUNCTION
+
+#only applicable for text data
+
+length:
+length = LEN(SalesOrder[Category])
+
+find:----------------------------------------it is a case sensitive
+find = FIND("2017",[Order ID],1,0)
+
+search:--------------------------------------it is not a case sesitivity
+search = SEARCH("ca",Returns[Order ID],1,0)
+
+replace:
+replace = REPLACE(Returns[Order ID],3,1,"raju")
+
+
+SUBSTITUTE------------------------------------it is a case sensitive
+sub = SUBSTITUTE([Order ID],"CA","raju")
+subs = SUBSTITUTE(Returns[Order ID],"-","raju",2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
